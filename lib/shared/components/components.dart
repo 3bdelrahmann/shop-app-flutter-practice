@@ -33,3 +33,87 @@ void navigateTo(
       MaterialPageRoute(builder: (context) => newRoute),
       (route) => backRoute,
     );
+
+Widget defaultFormField({
+  required TextEditingController controller,
+  required TextInputType type,
+  required FormFieldValidator<String> validate,
+  required IconData prefix,
+  ValueChanged<String>? onSubmit,
+  ValueChanged<String>? onChange,
+  GestureTapCallback? onTap,
+  bool isPassword = false,
+  String? label,
+  String? hint,
+  IconData? suffix,
+  VoidCallback? suffixPressed,
+  bool isClickable = true,
+}) =>
+    Container(
+      color: Colors.white,
+      child: TextFormField(
+        controller: controller,
+        keyboardType: type,
+        obscureText: isPassword,
+        enabled: isClickable,
+        onFieldSubmitted: onSubmit,
+        onChanged: onChange,
+        onTap: onTap,
+        validator: validate,
+        decoration: InputDecoration(
+          hintText: hint,
+          labelText: label,
+          prefixIcon: Icon(
+            prefix,
+          ),
+          suffixIcon: suffix != null
+              ? IconButton(
+                  onPressed: suffixPressed,
+                  icon: Icon(
+                    suffix,
+                  ),
+                )
+              : null,
+          border: OutlineInputBorder(),
+        ),
+      ),
+    );
+
+Widget defaultButton({
+  required VoidCallback onPressed,
+  required String text,
+  double width = double.infinity,
+  Color background = kMainColor,
+  bool isUpperCase = true,
+  double radius = 3.0,
+}) =>
+    Container(
+      width: width,
+      height: 50.0,
+      child: MaterialButton(
+        onPressed: onPressed,
+        child: Text(
+          isUpperCase ? text.toUpperCase() : text,
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+      ),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(
+          radius,
+        ),
+        color: background,
+      ),
+    );
+
+Widget defaultTextButton({
+  required VoidCallback onPressed,
+  required String text,
+}) =>
+    TextButton(
+      onPressed: onPressed,
+      child: Text(
+        text.toUpperCase(),
+      ),
+    );
