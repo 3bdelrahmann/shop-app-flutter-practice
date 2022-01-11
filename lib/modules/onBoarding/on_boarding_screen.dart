@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shop_app/modules/login/login_screen.dart';
 import 'package:shop_app/shared/components/components.dart';
+import 'package:shop_app/shared/network/local/cache_helper.dart';
 import 'package:shop_app/shared/styles/colors.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -50,6 +51,21 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
 
   bool isLast = false;
 
+  void submit() {
+    CacheHelper.saveData(
+      key: 'onBoarding',
+      value: true,
+    ).then((value) {
+      if (value) {
+        navigateTo(
+          context: context,
+          newRoute: LoginScreen(),
+          backRoute: false,
+        );
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,11 +73,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
         actions: [
           defaultTextButton(
               onPressed: () {
-                navigateTo(
-                  context: context,
-                  newRoute: LoginScreen(),
-                  backRoute: false,
-                );
+                submit();
               },
               text: 'skip')
         ],
@@ -112,11 +124,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                     icon: Icons.arrow_forward_ios,
                     onPressed: () {
                       if (isLast == true) {
-                        navigateTo(
-                          context: context,
-                          newRoute: LoginScreen(),
-                          backRoute: false,
-                        );
+                        submit();
                       } else {
                         onBoardingController.nextPage(
                           duration: Duration(milliseconds: 750),

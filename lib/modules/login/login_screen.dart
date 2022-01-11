@@ -1,9 +1,10 @@
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shop_app/layout/home_layout.dart';
 import 'package:shop_app/modules/register/register_screen.dart';
 import 'package:shop_app/shared/components/components.dart';
+import 'package:shop_app/shared/network/local/cache_helper.dart';
 
 import 'cubit/cubit.dart';
 import 'cubit/states.dart';
@@ -28,7 +29,28 @@ class LoginScreen extends StatelessWidget {
     return BlocProvider(
       create: (BuildContext context) => LoginCubit(),
       child: BlocConsumer<LoginCubit, LoginStates>(
-        listener: (BuildContext context, state) {},
+        listener: (BuildContext context, state) {
+          if (state is LoginOnSuccessState) {
+            if (state.loginModel.status == true) {
+              print(state.loginModel.data?.token);
+
+              CacheHelper.saveData(
+                      key: 'token', value: state.loginModel.data?.token)
+                  .then((value) {
+                navigateTo(
+                  context: context,
+                  newRoute: HomeLayout(),
+                  backRoute: false,
+                );
+              });
+            } else {
+              showToast(
+                text: '${state.loginModel.message}',
+                states: ToastStates.ERROR,
+              );
+            }
+          }
+        },
         builder: (BuildContext context, state) {
           LoginCubit cubit = LoginCubit.get(context);
           return Scaffold(
