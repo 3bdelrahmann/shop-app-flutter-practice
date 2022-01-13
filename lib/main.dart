@@ -26,7 +26,8 @@ void main() async {
   await CacheHelper.init();
 
   bool? onBoarding = CacheHelper.getData(key: 'onBoarding') ?? false;
-  token = CacheHelper.getData(key: 'token') ?? 'null';
+  token = CacheHelper.getData(key: 'token');
+  print(token);
   runApp(
     ShopApp(
       onBoarding: onBoarding!,
@@ -65,7 +66,7 @@ class ShopApp extends StatelessWidget {
             home: ConditionalBuilder(
                 condition: onBoarding,
                 builder: (BuildContext context) => ConditionalBuilder(
-                    condition: token != 'null',
+                    condition: token != ' ',
                     builder: (BuildContext context) => MainLayout(),
                     fallback: (BuildContext context) => LoginScreen()),
                 fallback: (BuildContext context) => OnBoardingScreen()),

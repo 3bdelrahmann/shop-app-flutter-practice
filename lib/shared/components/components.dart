@@ -132,7 +132,7 @@ void showToast({
         textColor: Colors.white,
         fontSize: 16.0);
 
-enum ToastStates { SUCCESS, ERROR, WARNING }
+enum ToastStates { SUCCESS, ERROR, WARNING, GREY }
 
 Color chooseToastColor(ToastStates states) {
   Color color;
@@ -145,6 +145,9 @@ Color chooseToastColor(ToastStates states) {
       break;
     case ToastStates.WARNING:
       color = Colors.amber;
+      break;
+    case ToastStates.GREY:
+      color = Colors.grey;
       break;
   }
   return color;

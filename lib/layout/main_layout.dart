@@ -43,12 +43,12 @@ class MainLayout extends StatelessWidget {
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.apps),
-              label: 'Categories',
-            ),
-            BottomNavigationBarItem(
               icon: Icon(Icons.favorite),
               label: 'Favorite',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.shopping_cart),
+              label: 'Cart',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person),

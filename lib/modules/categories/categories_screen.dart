@@ -14,15 +14,27 @@ class CategoriesScreen extends StatelessWidget {
     var cubit = AppCubit.get(context);
     return BlocConsumer<AppCubit, AppStates>(
         listener: (context, state) {},
-        builder: (context, state) => Container(
-              color: kMainColor.withOpacity(0.1),
-              child: ListView.separated(
-                itemBuilder: (context, index) => BuildCategoriesItem(
-                    cubit.categoriesModel!.data!.data[index]),
-                separatorBuilder: (context, index) => SizedBox(
-                  height: 5.0,
+        builder: (context, state) => Scaffold(
+              appBar: AppBar(
+                centerTitle: true,
+                title: Text(
+                  'Categories',
+                  style: TextStyle(
+                    fontSize: 30.0,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                itemCount: cubit.categoriesModel!.data!.data.length,
+              ),
+              body: Container(
+                color: kMainColor.withOpacity(0.1),
+                child: ListView.separated(
+                  itemBuilder: (context, index) => BuildCategoriesItem(
+                      cubit.categoriesModel!.data!.data[index]),
+                  separatorBuilder: (context, index) => SizedBox(
+                    height: 5.0,
+                  ),
+                  itemCount: cubit.categoriesModel!.data!.data.length,
+                ),
               ),
             ));
   }

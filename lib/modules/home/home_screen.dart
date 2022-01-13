@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shop_app/models/categories_model.dart';
 import 'package:shop_app/models/home_model.dart';
+import 'package:shop_app/modules/categories/categories_screen.dart';
+import 'package:shop_app/shared/components/components.dart';
 import 'package:shop_app/shared/cubit/cubit.dart';
 import 'package:shop_app/shared/cubit/states.dart';
 import 'package:shop_app/shared/styles/colors.dart';
@@ -19,10 +21,8 @@ class HomeScreen extends StatelessWidget {
       listener: (context, state) {},
       builder: (context, state) => ConditionalBuilder(
         condition: cubit.homeModel != null && cubit.categoriesModel != null,
-        builder: (context) => HomeBuilder(
-          cubit.homeModel!,
-          cubit.categoriesModel!,
-        ),
+        builder: (context) =>
+            HomeBuilder(cubit.homeModel!, cubit.categoriesModel!, context),
         fallback: (context) => Center(child: CircularProgressIndicator()),
       ),
     );
@@ -31,6 +31,7 @@ class HomeScreen extends StatelessWidget {
   Widget HomeBuilder(
     HomeModel model,
     CategoriesModel categoriesModel,
+    BuildContext context,
   ) =>
       SingleChildScrollView(
         physics: BouncingScrollPhysics(),
@@ -70,12 +71,28 @@ class HomeScreen extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Categories',
-                    style: TextStyle(
-                      fontSize: 30.0,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Categories',
+                          style: TextStyle(
+                            fontSize: 30.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          navigateTo(
+                            context: context,
+                            newRoute: CategoriesScreen(),
+                            backRoute: true,
+                          );
+                        },
+                        icon: Icon(Icons.list),
+                      ),
+                    ],
                   ),
                   SizedBox(
                     height: 10.0,
@@ -116,8 +133,8 @@ class HomeScreen extends StatelessWidget {
                   childAspectRatio: 1 / 1.65,
                   children: List.generate(
                     model.data!.products!.length,
-                    (index) =>
-                        ProductsGridBuilder(model.data!.products![index]),
+                    (index) => ProductsGridBuilder(
+                        model.data!.products![index], context),
                   ),
                 ),
               ),
@@ -150,7 +167,8 @@ class HomeScreen extends StatelessWidget {
         ],
       );
 
-  Widget ProductsGridBuilder(ProductModel model) => Container(
+  Widget ProductsGridBuilder(ProductModel model, BuildContext context) =>
+      Container(
         color: Colors.white,
         child: Column(
           children: [
@@ -214,10 +232,17 @@ class HomeScreen extends StatelessWidget {
                       IconButton(
                         padding: EdgeInsets.zero,
                         alignment: AlignmentDirectional.bottomEnd,
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.favorite_outline,
-                        ),
+                        onPressed: () {
+                          AppCubit.get(context).changeFavorites(model.id!);
+                        },
+                        icon: AppCubit.get(context).favourites[model.id]!
+                            ? Icon(
+                                Icons.favorite,
+                                color: Colors.red,
+                              )
+                            : Icon(
+                                Icons.favorite_outline,
+                              ),
                       ),
                     ],
                   ),

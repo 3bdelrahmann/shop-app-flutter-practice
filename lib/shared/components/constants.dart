@@ -15,4 +15,4 @@ void signOut(BuildContext context) {
   });
 }
 
-String token = '';
+String token = ' ';

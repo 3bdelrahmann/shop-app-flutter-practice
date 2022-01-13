@@ -13,3 +13,9 @@ class AppOnFailedHomeState extends AppStates {}
 class AppOnSuccessCategoriesState extends AppStates {}
 
 class AppOnFailedCategoriesState extends AppStates {}
+
+class AppChangeFavoriteState extends AppStates {}
+
+class AppOnSuccessChangeFavoriteState extends AppStates {}
+
+class AppOnFailedChangeFavoriteState extends AppStates {}
