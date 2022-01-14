@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shop_app/modules/search/search_screen.dart';
 import 'package:shop_app/shared/components/components.dart';
@@ -44,10 +46,10 @@ class MainLayout extends StatelessWidget {
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.favorite),
-              label: 'Favorite',
+              label: 'Favorites',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_cart),
+              icon: cartIcon(context),
               label: 'Cart',
             ),
             BottomNavigationBarItem(
@@ -59,4 +61,22 @@ class MainLayout extends StatelessWidget {
       ),
     );
   }
+
+  Widget cartIcon(BuildContext context) => Stack(
+        alignment: AlignmentDirectional.topEnd,
+        children: [
+          Icon(Icons.shopping_cart),
+          CircleAvatar(
+            child: Text(
+              '${AppCubit.get(context).cartLength}',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 6,
+              ),
+            ),
+            radius: 6,
+            backgroundColor: Colors.red,
+          ),
+        ],
+      );
 }

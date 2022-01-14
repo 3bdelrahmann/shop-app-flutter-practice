@@ -26,7 +26,7 @@ void main() async {
   await CacheHelper.init();
 
   bool? onBoarding = CacheHelper.getData(key: 'onBoarding') ?? false;
-  token = CacheHelper.getData(key: 'token');
+  token = CacheHelper.getData(key: 'token') ?? ' ';
   print(token);
   runApp(
     ShopApp(
@@ -52,7 +52,9 @@ class ShopApp extends StatelessWidget {
         BlocProvider(
           create: (BuildContext context) => AppCubit()
             ..getHomeData()
-            ..getCategoriesData(),
+            ..getCategoriesData()
+            ..getFavoritesData()
+            ..getCartData(),
         )
       ],
       child: BlocConsumer<AppCubit, AppStates>(

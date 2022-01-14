@@ -1,6 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shop_app/models/categories_model.dart';
@@ -130,7 +129,7 @@ class HomeScreen extends StatelessWidget {
                   crossAxisCount: 2,
                   mainAxisSpacing: 2.0,
                   crossAxisSpacing: 2.0,
-                  childAspectRatio: 1 / 1.65,
+                  childAspectRatio: 1 / 1.87,
                   children: List.generate(
                     model.data!.products!.length,
                     (index) => ProductsGridBuilder(
@@ -245,6 +244,22 @@ class HomeScreen extends StatelessWidget {
                               ),
                       ),
                     ],
+                  ),
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                  defaultButton(
+                    onPressed: () {
+                      AppCubit.get(context).changeCart(model.id!);
+                    },
+                    text: AppCubit.get(context).inCart[model.id]!
+                        ? 'Remove From Cart'
+                        : 'Add to Cart',
+                    textSize: 12.0,
+                    height: 40.0,
+                    background: AppCubit.get(context).inCart[model.id]!
+                        ? Colors.red
+                        : kMainColor,
                   ),
                 ],
               ),

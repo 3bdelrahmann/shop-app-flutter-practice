@@ -19,3 +19,21 @@ class AppChangeFavoriteState extends AppStates {}
 class AppOnSuccessChangeFavoriteState extends AppStates {}
 
 class AppOnFailedChangeFavoriteState extends AppStates {}
+
+class AppOnLoadingFavoritesState extends AppStates {}
+
+class AppOnSuccessFavoritesState extends AppStates {}
+
+class AppOnFailedFavoritesState extends AppStates {}
+
+class AppOnLoadingCartState extends AppStates {}
+
+class AppOnSuccessCartState extends AppStates {}
+
+class AppOnFailedCartState extends AppStates {}
+
+class AppChangeCartState extends AppStates {}
+
+class AppOnSuccessChangeCartState extends AppStates {}
+
+class AppOnFailedChangeCartState extends AppStates {}

@@ -1,11 +1,14 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shop_app/models/cart_model.dart';
 import 'package:shop_app/models/categories_model.dart';
+import 'package:shop_app/models/change_cart_model.dart';
 import 'package:shop_app/models/change_favorites_model.dart';
+import 'package:shop_app/models/favorites_model.dart';
 import 'package:shop_app/models/home_model.dart';
 import 'package:shop_app/modules/cart/cart_screen.dart';
-import 'package:shop_app/modules/favourite/favourite_screen.dart';
+import 'package:shop_app/modules/favorite/favorite_screen.dart';
 import 'package:shop_app/modules/home/home_screen.dart';
 import 'package:shop_app/modules/profile/profile_screen.dart';
 import 'package:shop_app/shared/components/components.dart';
@@ -23,7 +26,7 @@ class AppCubit extends Cubit<AppStates> {
 
   List<Widget> bottomScreens = [
     HomeScreen(),
-    FavouriteScreen(),
+    FavoritesScreen(),
     CartScreen(),
     ProfileScreen(),
   ];
@@ -35,6 +38,7 @@ class AppCubit extends Cubit<AppStates> {
 
   HomeModel? homeModel;
   Map<int, bool> favourites = {};
+  Map<int, bool> inCart = {};
   void getHomeData() {
     emit(AppOnLoadingHomeState());
     DioHelper.getData(
@@ -48,9 +52,10 @@ class AppCubit extends Cubit<AppStates> {
 
         homeModel?.data?.products?.forEach((element) {
           favourites.addAll({element.id!: element.inFavourites!});
+          inCart.addAll({element.id!: element.inCart!});
         });
 
-        // print(favourites.toString());
+        print(inCart.toString());
 
         emit(AppOnSuccessHomeState());
       },
@@ -100,6 +105,8 @@ class AppCubit extends Cubit<AppStates> {
             text: changeFavoritesModel!.message!,
             states: ToastStates.ERROR,
           );
+        } else {
+          getFavoritesData();
         }
 
         emit(AppOnSuccessChangeFavoriteState());
@@ -112,6 +119,90 @@ class AppCubit extends Cubit<AppStates> {
           states: ToastStates.ERROR,
         );
         emit(AppOnFailedChangeFavoriteState());
+      },
+    );
+  }
+
+  FavoritesModel? favoritesModel;
+  void getFavoritesData() {
+    emit(AppOnLoadingFavoritesState());
+    DioHelper.getData(
+      path: FAVORITES,
+      token: token,
+    ).then(
+      (value) {
+        favoritesModel = FavoritesModel.fromJson(value.data);
+        emit(AppOnSuccessFavoritesState());
+      },
+    ).catchError(
+      (error) {
+        print(error.toString());
+        emit(AppOnFailedFavoritesState());
+      },
+    );
+  }
+
+  int cartLength = 0;
+  CartModel? cartModel;
+  void getCartData() {
+    emit(AppOnLoadingCartState());
+    DioHelper.getData(
+      path: CARTS,
+      token: token,
+    ).then(
+      (value) {
+        cartModel = CartModel.fromJson(value.data);
+        cartLength = cartModel!.data!.cartItems!.length;
+        emit(AppOnSuccessCartState());
+        // print(value.toString());
+      },
+    ).catchError(
+      (error) {
+        print(error.toString());
+        emit(AppOnFailedCartState());
+      },
+    );
+  }
+
+  ChangeCartModel? changeCartModel;
+  void changeCart(int? productId) {
+    inCart[productId!] = !inCart[productId]!;
+    getCartData();
+    emit(AppChangeCartState());
+
+    DioHelper.postData(
+      path: CARTS,
+      data: {
+        'product_id': productId,
+      },
+      token: token,
+    ).then(
+      (value) {
+        changeCartModel = ChangeCartModel.fromJson(value.data);
+        if (!changeCartModel!.status!) {
+          inCart[productId] = !inCart[productId]!;
+          showToast(
+            text: changeCartModel!.message!,
+            states: ToastStates.ERROR,
+          );
+        } else {
+          getCartData();
+          showToast(
+            text: changeCartModel!.message!,
+            states: ToastStates.GREY,
+          );
+        }
+
+        emit(AppOnSuccessChangeCartState());
+      },
+    ).catchError(
+      (error) {
+        inCart[productId] = !inCart[productId]!;
+        showToast(
+          text: changeCartModel!.message!,
+          states: ToastStates.ERROR,
+        );
+        emit(AppOnFailedChangeCartState());
       },
     );
   }

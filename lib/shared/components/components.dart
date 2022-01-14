@@ -84,19 +84,22 @@ Widget defaultButton({
   required VoidCallback onPressed,
   required String text,
   double width = double.infinity,
+  double height = 50.0,
   Color background = kMainColor,
   bool isUpperCase = true,
   double radius = 3.0,
+  double textSize = 14.0,
 }) =>
     Container(
       width: width,
-      height: 50.0,
+      height: height,
       child: MaterialButton(
         onPressed: onPressed,
         child: Text(
           isUpperCase ? text.toUpperCase() : text,
           style: TextStyle(
             color: Colors.white,
+            fontSize: textSize,
           ),
         ),
       ),
@@ -152,3 +155,24 @@ Color chooseToastColor(ToastStates states) {
   }
   return color;
 }
+
+Widget RoundIconButton({
+  required IconData icon,
+  required VoidCallback onPressed,
+  required Color color,
+  Color? iconColor,
+}) =>
+    RawMaterialButton(
+      elevation: 0.0,
+      child: Icon(
+        icon,
+        color: iconColor,
+      ),
+      onPressed: onPressed,
+      constraints: const BoxConstraints.tightFor(
+        width: 40.0,
+        height: 40.0,
+      ),
+      shape: const CircleBorder(),
+      fillColor: color,
+    );
