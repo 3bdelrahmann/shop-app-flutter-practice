@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shop_app/layout/main_layout.dart';
 import 'package:shop_app/modules/login/login_screen.dart';
 import 'package:shop_app/modules/onBoarding/on_boarding_screen.dart';
+import 'package:shop_app/modules/register/cubit/cubit.dart';
 import 'package:shop_app/shared/bloc_observer.dart';
 import 'package:shop_app/shared/components/constants.dart';
 import 'package:shop_app/shared/cubit/cubit.dart';
@@ -50,11 +51,15 @@ class ShopApp extends StatelessWidget {
           create: (BuildContext context) => LoginCubit(),
         ),
         BlocProvider(
+          create: (BuildContext context) => RegisterCubit(),
+        ),
+        BlocProvider(
           create: (BuildContext context) => AppCubit()
             ..getHomeData()
             ..getCategoriesData()
             ..getFavoritesData()
-            ..getCartData(),
+            ..getCartData()
+            ..getProfileData(),
         )
       ],
       child: BlocConsumer<AppCubit, AppStates>(

@@ -1,4 +1,5 @@
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -17,91 +18,109 @@ class CartScreen extends StatelessWidget {
     return BlocConsumer<AppCubit, AppStates>(
         listener: (context, state) {},
         builder: (context, state) => ConditionalBuilder(
-              condition: cubit.cartModel!.data!.cartItems!.isEmpty,
-              builder: (context) => Center(
-                child: Container(
-                  height: 200,
-                  width: 200,
-                  child: SvgPicture.asset('assets/images/empty_cart.svg'),
+            condition: state is! AppOnLoadingFavoritesState &&
+                cubit.cartModel!.data != null,
+            builder: (context) => ConditionalBuilder(
+                  condition: cubit.cartModel!.data!.cartItems!.isEmpty,
+                  builder: (context) => Center(
+                    child: Container(
+                      height: 200,
+                      width: 200,
+                      child: SvgPicture.asset('assets/images/empty_cart.svg'),
+                    ),
+                  ),
+                  fallback: (context) => CartBuilder(cubit.cartModel!.data!),
                 ),
-              ),
-              fallback: (context) => ConditionalBuilder(
-                  condition: state is! AppOnLoadingFavoritesState,
-                  builder: (context) => Column(
-                        children: [
-                          Expanded(
-                            child: ListView.separated(
-                              itemBuilder: (context, index) => BuildCartItem(
-                                cubit.cartModel!.data!.cartItems![index],
-                                context,
-                              ),
-                              separatorBuilder: (context, index) => SizedBox(
-                                height: 5.0,
-                              ),
-                              itemCount:
-                                  cubit.cartModel!.data!.cartItems!.length,
-                            ),
-                          ),
-                          Container(
-                            color: kMainColor.withOpacity(0.1),
-                            child: Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        'SubTotal',
-                                        style: TextStyle(fontSize: 24.0),
-                                      ),
-                                      Spacer(),
-                                      Text(
-                                        '${cubit.cartModel!.data!.subTotal}',
-                                        style: TextStyle(fontSize: 24.0),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        'Shipping',
-                                        style: TextStyle(fontSize: 24.0),
-                                      ),
-                                      Spacer(),
-                                      Text(
-                                        '0',
-                                        style: TextStyle(fontSize: 24.0),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        'Total',
-                                        style: TextStyle(fontSize: 24.0),
-                                      ),
-                                      Spacer(),
-                                      Text(
-                                        '${cubit.cartModel!.data!.subTotal}',
-                                        style: TextStyle(fontSize: 24.0),
-                                      ),
-                                    ],
-                                  ),
-                                  defaultButton(
-                                    onPressed: () {},
-                                    text: 'Proceed To Checkout',
-                                    radius: 30.0,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                  fallback: (context) =>
-                      Center(child: CircularProgressIndicator())),
-            ));
+            fallback: (context) => Center(child: CircularProgressIndicator())));
   }
+
+  Widget CartBuilder(
+    CartDataModel cartDataModel,
+  ) =>
+      Column(
+        children: [
+          Expanded(
+            child: ListView.separated(
+              itemBuilder: (context, index) => BuildCartItem(
+                // cubit.cartModel!.data!.cartItems![index],
+                cartDataModel.cartItems![index],
+                context,
+              ),
+              separatorBuilder: (context, index) => SizedBox(
+                height: 5.0,
+              ),
+              itemCount:
+                  // cubit.cartModel!.data!.cartItems!.length,
+                  cartDataModel.cartItems!.length,
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.all(15.0),
+            decoration: BoxDecoration(
+              color: kMainColor.withOpacity(0.1),
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(70),
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        'SubTotal',
+                        style: TextStyle(fontSize: 20.0),
+                      ),
+                      Spacer(),
+                      Text(
+                        // '${cubit.cartModel!.data!.subTotal}',
+                        '${cartDataModel.subTotal.round()}',
+                        style: TextStyle(fontSize: 20.0),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        'Shipping',
+                        style: TextStyle(fontSize: 20.0),
+                      ),
+                      Spacer(),
+                      Text(
+                        '${(cartDataModel.total - cartDataModel.subTotal).round()}',
+                        style: TextStyle(fontSize: 20.0),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        'Total',
+                        style: TextStyle(fontSize: 20.0),
+                      ),
+                      Spacer(),
+                      Text(
+                        // '${cubit.cartModel!.data!.total}',
+                        '${cartDataModel.total.round()}',
+                        style: TextStyle(fontSize: 20.0),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                  defaultButton(
+                    onPressed: () {},
+                    text: 'Proceed To Checkout',
+                    radius: 30.0,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      );
 
   Widget BuildCartItem(
     CartItemsModel model,
@@ -132,6 +151,9 @@ class CartScreen extends StatelessWidget {
                       )),
               ],
             ),
+            SizedBox(
+              width: 10.0,
+            ),
             Expanded(
               child: Container(
                 height: 150.0,
@@ -149,7 +171,7 @@ class CartScreen extends StatelessWidget {
                       child: Row(
                         children: [
                           Text(
-                            '${model.product!.price}',
+                            '${model.product!.price.round()}',
                             style: TextStyle(
                               fontSize: 16.0,
                               color: kMainColor,
@@ -158,14 +180,14 @@ class CartScreen extends StatelessWidget {
                           SizedBox(
                             width: 5.0,
                           ),
-                          // if (model.product!.discount! > 0)
-                          Text(
-                            '${model.product!.oldPrice}',
-                            style: TextStyle(
-                              color: Colors.grey,
-                              decoration: TextDecoration.lineThrough,
+                          if (model.product!.discount! > 0)
+                            Text(
+                              '${model.product!.oldPrice.round()}',
+                              style: TextStyle(
+                                color: Colors.grey,
+                                decoration: TextDecoration.lineThrough,
+                              ),
                             ),
-                          ),
                         ],
                       ),
                     ),

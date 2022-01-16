@@ -37,3 +37,27 @@ class AppChangeCartState extends AppStates {}
 class AppOnSuccessChangeCartState extends AppStates {}
 
 class AppOnFailedChangeCartState extends AppStates {}
+
+class AppOnLoadingProfileState extends AppStates {}
+
+class AppOnSuccessProfileState extends AppStates {}
+
+class AppOnFailedProfileState extends AppStates {}
+
+class AppOnLoadingUpdateState extends AppStates {}
+
+class AppOnSuccessUpdateState extends AppStates {}
+
+class AppOnFailedUpdateState extends AppStates {
+  final String error;
+
+  AppOnFailedUpdateState(this.error);
+}
+
+class AppChangeUpdateState extends AppStates {}
+
+class AppOnLoadingSearchState extends AppStates {}
+
+class AppOnSuccessSearchState extends AppStates {}
+
+class AppOnFailedSearchState extends AppStates {}

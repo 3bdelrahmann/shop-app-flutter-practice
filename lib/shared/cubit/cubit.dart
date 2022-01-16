@@ -7,6 +7,8 @@ import 'package:shop_app/models/change_cart_model.dart';
 import 'package:shop_app/models/change_favorites_model.dart';
 import 'package:shop_app/models/favorites_model.dart';
 import 'package:shop_app/models/home_model.dart';
+import 'package:shop_app/models/login_model.dart';
+import 'package:shop_app/models/search_model.dart';
 import 'package:shop_app/modules/cart/cart_screen.dart';
 import 'package:shop_app/modules/favorite/favorite_screen.dart';
 import 'package:shop_app/modules/home/home_screen.dart';
@@ -33,6 +35,9 @@ class AppCubit extends Cubit<AppStates> {
 
   void changeNavBar(int index) {
     currentIndex = index;
+    getFavoritesData();
+    getCartData();
+    getProfileData();
     emit(AppChangeNavBarState());
   }
 
@@ -55,7 +60,7 @@ class AppCubit extends Cubit<AppStates> {
           inCart.addAll({element.id!: element.inCart!});
         });
 
-        print(inCart.toString());
+        // print(inCart.toString());
 
         emit(AppOnSuccessHomeState());
       },
@@ -169,6 +174,7 @@ class AppCubit extends Cubit<AppStates> {
     inCart[productId!] = !inCart[productId]!;
     getCartData();
     emit(AppChangeCartState());
+    print(productId);
 
     DioHelper.postData(
       path: CARTS,
@@ -188,7 +194,7 @@ class AppCubit extends Cubit<AppStates> {
         } else {
           getCartData();
           showToast(
-            text: changeCartModel!.message!,
+            text: changeCartModel?.message ?? 'Done',
             states: ToastStates.GREY,
           );
         }
@@ -199,10 +205,85 @@ class AppCubit extends Cubit<AppStates> {
       (error) {
         inCart[productId] = !inCart[productId]!;
         showToast(
-          text: changeCartModel!.message!,
+          text: changeCartModel?.message ?? 'error',
           states: ToastStates.ERROR,
         );
         emit(AppOnFailedChangeCartState());
+      },
+    );
+  }
+
+  LoginModel? profileModel;
+  void getProfileData() {
+    emit(AppOnLoadingProfileState());
+    DioHelper.getData(
+      path: PROFILE,
+      token: token,
+    ).then(
+      (value) {
+        profileModel = LoginModel.fromJson(value.data);
+        emit(AppOnSuccessProfileState());
+      },
+    ).catchError(
+      (error) {
+        print(error.toString());
+        emit(AppOnFailedProfileState());
+      },
+    );
+  }
+
+  void updateProfileData({
+    required String name,
+    required String email,
+    required String phone,
+  }) {
+    emit(AppOnLoadingUpdateState());
+    DioHelper.putData(
+      path: UPDATE_PROFILE,
+      token: token,
+      data: {
+        'name': name,
+        'email': email,
+        'phone': phone,
+      },
+    ).then(
+      (value) {
+        profileModel = LoginModel.fromJson(value.data);
+        emit(AppOnSuccessUpdateState());
+      },
+    ).catchError(
+      (error) {
+        emit(AppOnFailedUpdateState(error));
+      },
+    );
+  }
+
+  bool nonEditableField = true;
+  void changeUserManagementScreen() {
+    nonEditableField = false;
+    emit(AppChangeUpdateState());
+  }
+
+  SearchModel? searchModel;
+  void search({
+    required String text,
+  }) {
+    emit(AppOnLoadingSearchState());
+    DioHelper.postData(
+      path: SEARCH,
+      token: token,
+      data: {
+        'text': text,
+      },
+    ).then(
+      (value) {
+        searchModel = SearchModel.fromJson(value.data);
+        emit(AppOnSuccessSearchState());
+      },
+    ).catchError(
+      (error) {
+        print(error);
+        emit(AppOnFailedSearchState());
       },
     );
   }

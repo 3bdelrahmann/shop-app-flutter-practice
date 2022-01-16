@@ -122,14 +122,14 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
               Container(
-                color: Colors.grey[300],
+                color: kMainColor.withOpacity(0.1),
                 child: GridView.count(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
                   crossAxisCount: 2,
                   mainAxisSpacing: 2.0,
                   crossAxisSpacing: 2.0,
-                  childAspectRatio: 1 / 1.87,
+                  childAspectRatio: 1 / 2,
                   children: List.generate(
                     model.data!.products!.length,
                     (index) => ProductsGridBuilder(
@@ -255,7 +255,7 @@ class HomeScreen extends StatelessWidget {
                     text: AppCubit.get(context).inCart[model.id]!
                         ? 'Remove From Cart'
                         : 'Add to Cart',
-                    textSize: 12.0,
+                    textSize: 10.0,
                     height: 40.0,
                     background: AppCubit.get(context).inCart[model.id]!
                         ? Colors.red

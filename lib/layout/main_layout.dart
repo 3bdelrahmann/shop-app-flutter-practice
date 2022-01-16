@@ -66,17 +66,18 @@ class MainLayout extends StatelessWidget {
         alignment: AlignmentDirectional.topEnd,
         children: [
           Icon(Icons.shopping_cart),
-          CircleAvatar(
-            child: Text(
-              '${AppCubit.get(context).cartLength}',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 6,
+          if (AppCubit.get(context).cartLength > 0)
+            CircleAvatar(
+              child: Text(
+                '${AppCubit.get(context).cartLength}',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 5,
+                ),
               ),
+              radius: 6,
+              backgroundColor: Colors.red,
             ),
-            radius: 6,
-            backgroundColor: Colors.red,
-          ),
         ],
       );
 }

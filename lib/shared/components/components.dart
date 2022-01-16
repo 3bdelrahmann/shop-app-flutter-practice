@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shop_app/shared/cubit/cubit.dart';
 import 'package:shop_app/shared/styles/colors.dart';
 
 Widget onBoardingButton({
@@ -49,10 +50,14 @@ Widget defaultFormField({
   IconData? suffix,
   VoidCallback? suffixPressed,
   bool isClickable = true,
+  bool readOnly = false,
+  int? maxLength,
 }) =>
     Container(
       color: Colors.white,
       child: TextFormField(
+        maxLength: maxLength,
+        readOnly: readOnly,
         controller: controller,
         keyboardType: type,
         obscureText: isPassword,
@@ -175,4 +180,107 @@ Widget RoundIconButton({
       ),
       shape: const CircleBorder(),
       fillColor: color,
+    );
+
+Widget BuildFavoritesItem(
+  model,
+  BuildContext context,
+) =>
+    Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Row(
+        children: [
+          Stack(
+            alignment: AlignmentDirectional.bottomStart,
+            children: [
+              Image(
+                height: 120.0,
+                width: 120.0,
+                image: NetworkImage('${model.product!.image}'),
+              ),
+              if (model.product!.discount! > 0)
+                Container(
+                    padding: EdgeInsets.symmetric(horizontal: 5.0),
+                    color: Colors.red,
+                    child: Text(
+                      'DISCOUNT',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.white,
+                      ),
+                    )),
+            ],
+          ),
+          Expanded(
+            child: Container(
+              height: 120,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${model.product!.name}',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(height: 1.3),
+                  ),
+                  Spacer(),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        '${model.product!.price.round()}',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          color: kMainColor,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 5.0,
+                      ),
+                      if (model.product!.discount! > 0)
+                        Text(
+                          '${model.product!.oldPrice.round()}',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            decoration: TextDecoration.lineThrough,
+                          ),
+                        ),
+                      Spacer(),
+                      IconButton(
+                        onPressed: () {
+                          AppCubit.get(context).changeCart(model.product!.id!);
+                        },
+                        icon: AppCubit.get(context).inCart[model.product!.id]!
+                            ? Icon(
+                                Icons.remove_shopping_cart,
+                                color: Colors.red,
+                              )
+                            : Icon(
+                                Icons.add_shopping_cart,
+                                color: Colors.green,
+                              ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          AppCubit.get(context)
+                              .changeFavorites(model.product!.id!);
+                        },
+                        icon:
+                            AppCubit.get(context).favourites[model.product!.id]!
+                                ? Icon(
+                                    Icons.favorite,
+                                    color: Colors.red,
+                                  )
+                                : Icon(
+                                    Icons.favorite_outline,
+                                  ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );

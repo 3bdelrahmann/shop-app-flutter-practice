@@ -10,8 +10,8 @@ class CartModel {
 
 class CartDataModel {
   List<CartItemsModel>? cartItems;
-  int? subTotal;
-  int? total;
+  dynamic subTotal;
+  dynamic total;
 
   CartDataModel.fromJson(Map<String, dynamic> json) {
     if (json['cart_items'] != null) {
@@ -41,8 +41,8 @@ class CartItemsModel {
 
 class CartProductModel {
   int? id;
-  int? price;
-  int? oldPrice;
+  dynamic price;
+  dynamic oldPrice;
   int? discount;
   String? image;
   String? name;
